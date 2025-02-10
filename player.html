@@ -38,7 +38,7 @@
             margin-right: 0.2em;
           "
         >
-          🎵 Song
+          Song
         </a>
         <a
           id="player-artist-link"
@@ -53,7 +53,7 @@
             margin-right: 0.2em;
           "
         >
-          🧑‍🎤 Artist</a
+          Artist</a
         >
         <a
           id="player-album-link"
@@ -68,7 +68,7 @@
             margin-right: 0.2em;
           "
         >
-          💽 Album</a
+          Album</a
         >
         <a
           id="player-mp3-link"
@@ -83,7 +83,7 @@
             margin-right: 0.2em;
           "
         >
-          📻 MP3</a
+          MP3</a
         >
         <div id="player-status" style="margin: 2em 0 1em 0"></div>
         <div
@@ -159,8 +159,8 @@
         document.getElementById("player-artist").innerHTML =
           data.item.artists[0].name;
         document.getElementById("player-status").innerHTML = data.is_playing
-          ? `▶️ ${spotifyUser}'s now playing...`
-          : `⏸ ${spotifyUser} has paused.`;
+          ? `${spotifyUser} is now playing...`
+          : `${spotifyUser} has paused.`;
         document
           .getElementById("player-album-art")
           .setAttribute("src", data.item.album.images[1].url);
