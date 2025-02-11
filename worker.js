@@ -102,7 +102,17 @@ async function handleNowPlaying(request) {
     .then((data) => {
       return data.access_token;
     });
-
+  var playedData = await fetch(
+    "https://api.spotify.com/v1/me/player/recently-played",
+    {
+      headers: {
+        Authorization: "Bearer " + access_token,
+      },
+    }
+  ).then((response) => {
+      // TODO: Check errors here
+    return response.text();
+  });
   var songData = await fetch(
     "https://api.spotify.com/v1/me/player/currently-playing",
     {
@@ -119,7 +129,8 @@ async function handleNowPlaying(request) {
   // If response is empty throw error
   if (!songData) songData = { ERROR: "Couldn't retrieve now playing." };
   else songData = JSON.parse(songData);
-
+  if (!playedData) playedData = { ERROR: "Couldn't retrieve played." };
+  else playedData = JSON.parse(playedData);
   // Add CORS to allow requests from any domain
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -127,7 +138,7 @@ async function handleNowPlaying(request) {
     "Access-Control-Max-Age": "86400",
   };
 
-  return new Response(JSON.stringify(songData, null, 2), {
+  return new Response(JSON.stringify(songData, playedData, null, 3), {
     headers: corsHeaders,
   });
 }
