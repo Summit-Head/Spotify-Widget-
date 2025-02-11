@@ -103,7 +103,7 @@ async function handleNowPlaying(request) {
       return data.access_token;
     });
   var playedData = await fetch(
-    "https://api.spotify.com/v1/me/player/recently-played",
+    "https://api.spotify.com/v1/me/player/recently-played?limit=6",
     {
       headers: {
         Authorization: "Bearer " + access_token,
