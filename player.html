@@ -1,5 +1,5 @@
-<body style="margin: 0;">
-<table
+<body style="margin: 0; aspect-ratio: 1/2;">
+  <table
   id="player"
   style="
     background-color: #111;
@@ -9,23 +9,23 @@
     border-radius: 10px;
     filter: opacity(0.8);
     width: 100%;
-    height: 100%;
+    padding: 10vmin;
+    height: 20%;
   "
 >
   <tr height="100%">
     <td width="20%" align="center">
-      <a href="" id="img_link"><img
+      <img
         id="player-album-art"
         style="margin: 1em; max-height: 50vmin; border-radius: 10px"
-      /></a>
+      />
     </td>
     <td width="80%">
       <div style="margin: 1em 1em 1em 0">
-        <a href="" id="player-song" style="font-size: 2em; color: white;"></a>
-        <br>
+        <a href="" id="player-song" style="font-size: 2em; color: white;"></a><br>
         <a href=""
           id="player-artist"
-          style="font-size: 1.3em; color: white;visited { text-decoration: none;} margin-bottom: 1em"
+          style="font-size: 1.3em; margin-bottom: 1em; color: white;"
         ></a>
         <div id="player-status" style="margin: 2em 0 1em 0"></div>
         <div
@@ -47,7 +47,7 @@
             "
           ></div>
         </div>
-          <div style="float: right; font-size: 0.9em">
+        <div style="float: right; font-size: 0.9em">
           <a
             href="https://github.com/Naushikha/Spotify-Widget"
             target="_blank"
@@ -59,29 +59,7 @@
       </div>
     </td>
   </tr>
-  <div
-    id="player-background"
-    class="background"
-    style="
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      z-index: -10;
-      background-position: center center;
-      background-size: 100%;
-      filter: blur(2em);
-      position: absolute;
-      transition: background-image 0.5s ease-in;
-    "
-  ></div>
 </table>
-<div class="recent">
-  <div style="">
-    
-  </div>
-</div>
-</body>
 
 <script>
   var serviceHost = "https://spotifywidget.dibbledap.workers.dev";
@@ -101,19 +79,12 @@
           return;
         }
         songData = data;
-        
-        for (let i = 0; i < 6; i++){
-          document.getElementById("recent").innerHTML += 
-          `<div style>
-          
-          </div>`;
-        }
         document.getElementById("player-song").innerHTML = data.item.name;
         document.getElementById("player-artist").innerHTML =
           data.item.artists[0].name;
         document.getElementById("player-status").innerHTML = data.is_playing
-          ? `${spotifyUser} is now playing...`
-          : `${spotifyUser} has paused.`;
+          ? ` ${spotifyUser} is now playing...`
+          : ` ${spotifyUser} has paused.`;
         document
           .getElementById("player-album-art")
           .setAttribute("src", data.item.album.images[1].url);
@@ -125,25 +96,9 @@
               `width: ${(data.progress_ms * 100) / data.item.duration_ms}%`
           );
 
-        document.getElementById(
-          "player-background"
-        ).style.backgroundImage = `url(${data.item.album.images[1].url})`;
-
+      
         // Set the links to spotify stuff
-        document
-          .getElementById("player-song-link")
-          .setAttribute("href", data.item.external_urls.spotify);
-          document.getElementById("img_link")
-          .setAttribute("href", data.item.external_urls.spotify);
-        document
-          .getElementById("player-artist-link")
-          .setAttribute("href", data.item.artists[0].external_urls.spotify);
-        document
-          .getElementById("player-album-link")
-          .setAttribute("href", data.item.album.external_urls.spotify);
 
-
-        // Hide mp3 link if the song does not provide that
         // Timer to show updates on progress bar and time
         // https://stackoverflow.com/questions/5517597/plain-count-up-timer-in-javascript
         progressSeconds = Math.ceil(songData.progress_ms / 1000);
@@ -156,14 +111,6 @@
         }
 
         // Hide all the extra things in mobile (<410px)
-        /* if (document.getElementById("player").clientWidth < 410) {
-          // Hide links
-          document.getElementById("player-song-link").style.display = "none";
-          document.getElementById("player-artist-link").style.display = "none";
-          document.getElementById("player-album-link").style.display = "none";
-          // Hide duration
-          document.getElementById("player-time").style.display = "none";
-        } */
       });
   }
 
@@ -197,8 +144,3 @@
   // Load player for the first time
   updatePlayer();
 </script>
-<style>
-  .songthing{
-
-  }
-</style>
