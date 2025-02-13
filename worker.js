@@ -21,7 +21,8 @@ addEventListener("fetch", (event) => {
       event.respondWith(handleCallback(event.request));
 
       break;
-    case "get-now-playing":
+    //im sure this could be better. however, i dont care
+    case ("get-now-playing" || "get-all"):
       event.respondWith(handleNowPlaying(event.request));
 
       break;
@@ -87,6 +88,7 @@ async function handleCallback(request) {
 
 async function handleNowPlaying(request) {
   // Get a new access token everytime :D << Easy way out (Without checking expire time)
+  // if he isn't worried about the quota, i guess i shouldn't be. but im in too deep now. lets see what happens. - Summit
   var access_token = await fetch("https://accounts.spotify.com/api/token", {
     method: "post",
     headers: {
@@ -102,17 +104,6 @@ async function handleNowPlaying(request) {
     .then((data) => {
       return data.access_token;
     });
-  var playedData = await fetch(
-    "https://api.spotify.com/v1/me/player/recently-played?limit=6",
-    {
-      headers: {
-        Authorization: "Bearer " + access_token,
-      },
-    }
-  ).then((response) => {
-      // TODO: Check errors here
-    return response.text();
-  });
   var songData = await fetch(
     "https://api.spotify.com/v1/me/player/currently-playing",
     {
@@ -124,21 +115,44 @@ async function handleNowPlaying(request) {
     // TODO: Check errors here
     return response.text();
   });
-
+  //if we also wanted the recently played (trying to minimize the requests in case of more traffic, seems like a good practice? Thats half of what im doing here, practice by doing projects and stuff) - summit
+  var playedData = null;
+  // ^ whatever, good enough
+  if (route = 'get-all'){
+    playedData = await fetch(
+      "https://api.spotify.com/v1/me/player/recently-played?limit=6",
+      //maximum of 6 when ill usually use 4 because I want multiple versions for different pages and experimenting. im doing so much crap for a website i haven't even made yet and i have to get up at 7 tomorrow oh well. - Summit
+      {
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      }
+    ).then((response) => {
+        // TODO: Check errors here
+      return response.text();
+    });
+  }
   // https://mcculloughwebservices.com/2016/09/23/handling-a-null-response-from-an-api/
   // If response is empty throw error
   if (!songData) songData = { ERROR: "Couldn't retrieve now playing." };
   else songData = JSON.parse(songData);
-  if (!playedData) playedData = { ERROR: "Couldn't retrieve played." };
-  else playedData = JSON.parse(playedData);
+
+  // if (!playedData) playedData = { ERROR: "Couldn't retrieve played." };
+  // else 
+
+  // ^i think theres always recently played? im about to find out! -summit
+
+  ////ok i think im done??? i should have tested things along the way, but it might be fine in this case... - summit
+
+  playedData = JSON.parse(playedData);
+
   // Add CORS to allow requests from any domain
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET",
     "Access-Control-Max-Age": "86400",
   };
-
-  return new Response(JSON.stringify(songData, playedData, null, 3), {
+  return new Response(JSON.stringify([songData, playedData], null, 3), {
     headers: corsHeaders,
   });
 }

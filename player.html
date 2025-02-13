@@ -61,43 +61,37 @@
   </tr>
 </table>
 <div id="recent">
-  
+  <img src="songData.items[i].track.album.images[1].url" style="display: inline-block;" >
+  <p style="display: inline-block;">
+  songData.items[i].track.name<br>
+  <span>songData.items[i].track.artists[0]</span>
+  </p>
 </div>
 </body>
 
 <script>
   var serviceHost = "https://spotifywidget.dibbledap.workers.dev";
   var spotifyUser = "Summit";
+  var requestType = '/get-all'
+  //get both the currently playing and recenty played
 
   var songData, playedData, progressSeconds, totalSeconds, progressInterval;
 
   function updatePlayer() {
-    if (songData = null){
-      fetch(`${serviceHost}/get-all`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.hasOwnProperty("ERROR")) {
-          document.getElementById(
-            "player-song"
-          ).innerHTML = `${spotifyUser} isn't playing anything.`;
-          document.getElementById("player-artist").innerHTML = "  ";
-          return;
-        }
+    if (!(songData = null)){
+      playedData = playedData.slice(0, -1);
+      playedData.unshift(songData);
+      requestType = '/get-now-playing'
     }
-    else{
-    cycleRecent()
-    fetch(`${serviceHost}/get-now-playing`)
+    fetch(`${serviceHost}${requestType}`)
       .then((response) => response.json())
       .then((data) => {
-        if (data.hasOwnProperty("ERROR")) {
-          document.getElementById(
-            "player-song"
-          ).innerHTML = `${spotifyUser} isn't playing anything.`;
-          document.getElementById("player-artist").innerHTML = "  ";
-          return;
+        //maybe should have just made a new object instead of an array, but whatever -summit
+        songData = data[0];
+        if (playedData = null){
+          playedData = data[1];
         }
-      }
-        songData = data;
+
         document.getElementById("player-song").innerHTML = data.item.name;
         document.getElementById("player-song").href = data.item.uri;
         document.getElementById("player-artist").innerHTML =
@@ -130,25 +124,19 @@
         } else {
           setProgress();
         }
+      });
+    }
 
         // Hide all the extra things in mobile (<410px)
-      });
-  }
-  
-  function cycleRecent(){
-    playedData.unshift(songData)
-    
-  }
   
   function setRecent(int){
     for (let i = int; i < 4+int; i++){
-      <img src="songData.items[i].track.album.images[1].url" style="display: inline-block;" >
-      <p style="display: inline-block;">
-      songData.items[i].track.name<br>
-      <span>songData.items[i].track.artists[0]</span>
-      </p>
+      document.getElementById("recent").append(
+      
+    );
     }
   }
+
 
   function setProgress() {
     if (progressSeconds > totalSeconds) {
@@ -176,6 +164,7 @@
       return valString;
     }
   }
+
 
   // Load player for the first time
   updatePlayer();
