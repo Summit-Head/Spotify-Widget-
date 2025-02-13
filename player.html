@@ -61,49 +61,15 @@
   </tr>
 </table>
 <div id="recent">
-  <a class="songBlock" id="songBlock0" href="">
-    <img class="blockImg" id="blockImg0">
-    <p class="blockText">
-      <span class="blockSong" id="blockSong0"></span>
-      <span class="blockArtist" id="blockArtist0"></span>
-    </p>
-  </a>
-  <a class="songBlock" id="songBlock1" href="">
-    <img class="blockImg" id="blockImg1">
-    <p class="blockText">
-      <span class="blockSong" id="blockSong1"></span>
-      <span class="blockArtist" id="blockArtist1"></span>
-    </p>
-  </a>
-  <a class="songBlock" id="songBlock2" href="">
-    <img class="blockImg" id="blockImg2">
-    <p class="blockText">
-      <span class="blockSong" id="blockSong2"></span>
-      <span class="blockArtist" id="blockArtist2"></span>
-    </p>
-  </a>
-  <a class="songBlock" id="songBlock3" href="">
-    <img class="blockImg" id="blockImg3">
-    <p class="blockText">
-      <span class="blockSong" id="blockSong3"></span>
-      <span class="blockArtist" id="blockArtist3"></span>
-    </p>
-  </a>
-  <a class="songBlock" id="songBlock4" href="">
-    <img class="blockImg" id="blockImg4">
-    <p class="blockText">
-      <span class="blockSong" id="blockSong4"></span>
-      <span class="blockArtist" id="blockArtist4"></span>
-    </p>
-  </a>
-  <a class="songBlock" id="songBlock5" href="">
-    <img class="blockImg" id="blockImg5">
-    <p class="blockText">
-      <span class="blockSong" id="blockSong5"></span>
-      <span class="blockArtist" id="blockArtist5"></span>
-    </p>
-  </a>
+  
 </div>
+<a id="playedTemplate" style="display: none" class="songBlock" href=${playedData.items[i].track.uri};>
+  <img src=playedData.items[i].album.images[1]; class="blockImg" id="blockImg"></img>
+  <p class="blockText" id="blockImg">
+    <span class="blockSong" id="blockSong"></span>
+    <span class="blockArtist" id="blockartist"></span>
+  </p>
+</a>
 </body>
 <style>
   .songBlock{
@@ -197,9 +163,12 @@
   function setRecent(int){
     //im so sorry to anyone that sees this -summit
     for (let i = 0; i < int-1; i++){
-      document.getElementById('songBlock'+i).display = "block"
-      document.getElementById('songBlock'+i).href = playedData.items[i].track.uri;
-      document.getElementById('blockImg'+i).src = playedData.items[i].album.images[1];
+      const playedCopy = document.getElementById("playedTemplate").cloneNode(true);
+      playedCopy.href = "playedData.items[i].track.uri";
+      playedCopy.getElementById(blockImg).src= playedData.items[i].album.images[1];
+      playedCopy.getElementById(blockSong).innerHTML= playedData.items[i].name;
+      playedCopy.getElementById(blockArtist).innerHTML = playedData.items[i].artists[0];
+      document.getElementById(played).appendChild(playedCopy);
     }
   }
 
