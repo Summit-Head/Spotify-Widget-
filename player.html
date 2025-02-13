@@ -63,8 +63,8 @@
 <div id="recent">
   
 </div>
-<a id="playedTemplate" style="display: none" class="songBlock" href=${playedData.items[i].track.uri};>
-  <img src=playedData.items[i].album.images[1]; class="blockImg" id="blockImg"></img>
+<a id="playedTemplate" style="display: none" class="songBlock">
+  <img class="blockImg" id="blockImg"></img>
   <p class="blockText" id="blockImg">
     <span class="blockSong" id="blockSong"></span>
     <span class="blockArtist" id="blockartist"></span>
@@ -94,7 +94,7 @@
 <script>
   var serviceHost = "https://spotifywidget.dibbledap.workers.dev";
   var spotifyUser = "Summit";
-  var requestRecent = true;
+  var request = "/get-all";
   //get both the currently playing and recenty played
 
   var songData, playedData, progressSeconds, totalSeconds, progressInterval;
@@ -103,16 +103,16 @@
     if (!(playedData === undefined)){
       playedData = playedData.slice(0, -1);
       playedData.unshift(songData.item);
-      requestRecent = false;
+      requestRecent = "/get-recently-played";
     }
-    fetch(`${serviceHost}/get-now-playing`,)
+    fetch(`${serviceHost}${request}`,)
       .then((response) => response.json())
       .then((data) => {
         //maybe should have just made a new object instead of an array, but whatever -summit
         songData = data[0];
-        console.log(songData)
-        if (playedData = null){
+        if (playedData === undefined){
           playedData = data[1];
+          console.log(JSON.stringify(playedData));
         }
         if(data[0].hasOwnProperty("ERROR")){
           document.getElementById('player').style.display = "none";
@@ -164,9 +164,9 @@
     //im so sorry to anyone that sees this -summit
     for (let i = 0; i < int-1; i++){
       const playedCopy = document.getElementById("playedTemplate").cloneNode(true);
-      playedCopy.href = "playedData.items[i].track.uri";
-      playedCopy.getElementById(blockImg).src= playedData.items[i].album.images[1];
-      playedCopy.getElementById(blockSong).innerHTML= playedData.items[i].name;
+      playedCopy.href = playedData.items[i].track.uri;
+      playedCopy.getElementById(blockImg).src= "${playedData.items[i].album.images[1]}";
+      playedCopy.getElementById(blockSong).innerHTML= "${playedData.items[i].name}";
       playedCopy.getElementById(blockArtist).innerHTML = playedData.items[i].artists[0];
       document.getElementById(played).appendChild(playedCopy);
     }
