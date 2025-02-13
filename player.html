@@ -1,4 +1,4 @@
-<body style="margin: 0; aspect-ratio: 1/2;">
+<body style="margin: 0; ">
   <table
   id="player"
   style="
@@ -61,56 +61,119 @@
   </tr>
 </table>
 <div id="recent">
-  <img src="songData.items[i].track.album.images[1].url" style="display: inline-block;" >
-  <p style="display: inline-block;">
-  songData.items[i].track.name<br>
-  <span>songData.items[i].track.artists[0]</span>
-  </p>
+  <a class="songBlock" id="songBlock0" href="">
+    <img class="blockImg" id="blockImg0">
+    <p class="blockText">
+      <span class="blockSong" id="blockSong0"></span>
+      <span class="blockArtist" id="blockArtist0"></span>
+    </p>
+  </a>
+  <a class="songBlock" id="songBlock1" href="">
+    <img class="blockImg" id="blockImg1">
+    <p class="blockText">
+      <span class="blockSong" id="blockSong1"></span>
+      <span class="blockArtist" id="blockArtist1"></span>
+    </p>
+  </a>
+  <a class="songBlock" id="songBlock2" href="">
+    <img class="blockImg" id="blockImg2">
+    <p class="blockText">
+      <span class="blockSong" id="blockSong2"></span>
+      <span class="blockArtist" id="blockArtist2"></span>
+    </p>
+  </a>
+  <a class="songBlock" id="songBlock3" href="">
+    <img class="blockImg" id="blockImg3">
+    <p class="blockText">
+      <span class="blockSong" id="blockSong3"></span>
+      <span class="blockArtist" id="blockArtist3"></span>
+    </p>
+  </a>
+  <a class="songBlock" id="songBlock4" href="">
+    <img class="blockImg" id="blockImg4">
+    <p class="blockText">
+      <span class="blockSong" id="blockSong4"></span>
+      <span class="blockArtist" id="blockArtist4"></span>
+    </p>
+  </a>
+  <a class="songBlock" id="songBlock5" href="">
+    <img class="blockImg" id="blockImg5">
+    <p class="blockText">
+      <span class="blockSong" id="blockSong5"></span>
+      <span class="blockArtist" id="blockArtist5"></span>
+    </p>
+  </a>
 </div>
 </body>
-
+<style>
+  .songBlock{
+    display: none;
+    background-color: #111;
+  }
+  .blockImg{
+    display: inline-block;
+    width: 20%;
+  }
+  .blockText{
+    width: 80%;
+    display: inline-block;
+  }
+  .blockSong{
+    font-size:20px
+  }
+  .blockArtist{
+    font-size: 10px;
+  }
+</style>
 <script>
   var serviceHost = "https://spotifywidget.dibbledap.workers.dev";
   var spotifyUser = "Summit";
-  var requestType = '/get-all'
+  var requestRecent = true;
   //get both the currently playing and recenty played
 
   var songData, playedData, progressSeconds, totalSeconds, progressInterval;
 
   function updatePlayer() {
-    if (!(songData = null)){
+    if (!(playedData === undefined)){
       playedData = playedData.slice(0, -1);
-      playedData.unshift(songData);
-      requestType = '/get-now-playing'
+      playedData.unshift(songData.item);
+      requestRecent = false;
     }
-    fetch(`${serviceHost}${requestType}`)
+    fetch(`${serviceHost}/get-now-playing`,)
       .then((response) => response.json())
       .then((data) => {
         //maybe should have just made a new object instead of an array, but whatever -summit
         songData = data[0];
+        console.log(songData)
         if (playedData = null){
           playedData = data[1];
         }
-
-        document.getElementById("player-song").innerHTML = data.item.name;
-        document.getElementById("player-song").href = data.item.uri;
+        if(data[0].hasOwnProperty("ERROR")){
+          document.getElementById('player').style.display = "none";
+          //hide current, show 6 recent (will make it scalable later) - summit
+          setRecent(6);
+        }
+        document.getElementById("player-song").innerHTML = songData.item.name;
+        document.getElementById("player-song").href = songData.item.uri;
         document.getElementById("player-artist").innerHTML =
-          data.item.artists[0].name;
-        document.getElementById("player-artist").href = data.item.artists[0].uri;
+          songData.item.artists[0].name;
+        document.getElementById("player-artist").href = songData.item.artists[0].uri;
         document.getElementById("player-status").innerHTML = data.is_playing
           ? ` ${spotifyUser} is now playing...`
           : ` ${spotifyUser} has paused.`;
         document
           .getElementById("player-album-art")
-          .setAttribute("src", data.item.album.images[1].url);
+          .setAttribute("src", songData.item.album.images[1].url);
         document
           .getElementById("player-progress")
           .setAttribute(
             "style",
             document.getElementById("player-progress").getAttribute("style") +
-              `width: ${(data.progress_ms * 100) / data.item.duration_ms}%`
+              `width: ${(songData.progress_ms * 100) / songData.item.duration_ms}%`
           );
         
+        //we have currently playing!! so only do 4 recent songs. we diddnt cycle the list so its fine.
+        setRecent(4);
       
         // Set the links to spotify stuff
 
@@ -129,11 +192,14 @@
 
         // Hide all the extra things in mobile (<410px)
   
+
+
   function setRecent(int){
-    for (let i = int; i < 4+int; i++){
-      document.getElementById("recent").append(
-      
-    );
+    //im so sorry to anyone that sees this -summit
+    for (let i = 0; i < int-1; i++){
+      document.getElementById('songBlock'+i).display = "block"
+      document.getElementById('songBlock'+i).href = playedData.items[i].track.uri;
+      document.getElementById('blockImg'+i).src = playedData.items[i].album.images[1];
     }
   }
 

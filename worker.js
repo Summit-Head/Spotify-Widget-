@@ -152,7 +152,7 @@ async function handleNowPlaying(request) {
     "Access-Control-Allow-Methods": "GET",
     "Access-Control-Max-Age": "86400",
   };
-  return new Response(JSON.stringify([songData, playedData], null, 3), {
+  return new Response(JSON.stringify([songData, playedData], null, 2), {
     headers: corsHeaders,
   });
 }
