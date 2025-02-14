@@ -46,7 +46,7 @@ async function handleAuthorization(request) {
   var state = "SPOTIFY_WIDGET"; // TODO: No use? remove?
   var url = new URL(request.url);
   var callback_url = `${url.protocol}//${url.hostname}/callback`;
-  var scope = "user-read-currently-playing";
+  var scope = "user-read-currently-playing user-read-recently-played";
   var params = {
     response_type: "code",
     client_id: CLIENT_ID,
