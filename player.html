@@ -165,7 +165,7 @@
     for (let i = 0; i < int; i++){
       playedCopy = (document.getElementById("playedTemplate").cloneNode(true));
       console.log(playedData.items[i]);
-      playedCopy.style.display = 'inline-block';
+      playedCopy.style.display = 'block';
       playedCopy.href = playedData.items[i].href;
       playedCopy.querySelector(".blockImg").src= playedData.items[i].track.album.images[1].url;
       playedCopy.querySelector(".blockSong").innerHTML= playedData.items[i].track.name;
