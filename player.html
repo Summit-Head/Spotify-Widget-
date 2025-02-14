@@ -101,8 +101,9 @@
 
   function updatePlayer() {
     if (!(playedData === undefined)){
-      playedData = playedData.slice(0, -1);
-      playedData.unshift(songData.item);
+      playedData.items.pop();
+      const PlayHistoryObject = songData.item.trackObject;
+      playedData.items.unshift();
       requestRecent = "/get-recently-played";
     }
     fetch(`${serviceHost}${request}`,)
@@ -112,7 +113,6 @@
         songData = data[0];
         if (playedData === undefined){
           playedData = data[1];
-          console.log(JSON.stringify(playedData));
         }
         if(data[0].hasOwnProperty("ERROR")){
           document.getElementById('player').style.display = "none";
@@ -120,10 +120,10 @@
           setRecent(6);
         }
         document.getElementById("player-song").innerHTML = songData.item.name;
-        document.getElementById("player-song").href = songData.item.uri;
+        document.getElementById("player-song").href = songData.item.external_urls.spotify;
         document.getElementById("player-artist").innerHTML =
           songData.item.artists[0].name;
-        document.getElementById("player-artist").href = songData.item.artists[0].uri;
+        document.getElementById("player-artist").href = songData.item.artists[0].external_urls.spotify;
         document.getElementById("player-status").innerHTML = data.is_playing
           ? ` ${spotifyUser} is now playing...`
           : ` ${spotifyUser} has paused.`;
@@ -162,13 +162,16 @@
 
   function setRecent(int){
     //im so sorry to anyone that sees this -summit
-    for (let i = 0; i < int-1; i++){
-      const playedCopy = document.getElementById("playedTemplate").cloneNode(true);
-      playedCopy.href = playedData.items[i].track.uri;
-      playedCopy.getElementById(blockImg).src= "${playedData.items[i].album.images[1]}";
-      playedCopy.getElementById(blockSong).innerHTML= "${playedData.items[i].name}";
-      playedCopy.getElementById(blockArtist).innerHTML = playedData.items[i].artists[0];
-      document.getElementById(played).appendChild(playedCopy);
+    for (let i = 0; i < int; i++){
+      playedCopy = (document.getElementById("playedTemplate").cloneNode(true));
+      console.log(playedData.items[i]);
+      playedCopy.style.display = 'inline-block';
+      playedCopy.href = playedData.items[i].href;
+      playedCopy.querySelector(".blockImg").src= playedData.items[i].track.album.images[1].url;
+      playedCopy.querySelector(".blockSong").innerHTML= playedData.items[i].track.name;
+      playedCopy.querySelector(".blockArtist").innerHTML = playedData.items[i].track.artists[0].name;
+      const thing = document.getElementById("recent")
+      thing.appendChild(playedCopy);
     }
   }
 
