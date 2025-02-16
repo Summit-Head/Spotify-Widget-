@@ -1,52 +1,54 @@
-<body style="margin: 0; aspect-ratio: 1/2;">
+<body style="margin: 0; width: 100%; height: 100%;">
   <table
   id="player"
   style="
-    height: 10%;
+    height: 20vh;
+    width: 100%;
     background-color: #111;
     color: #fff;
     font-family: Helvetica, Arial;
     font-size: 5vmin;
     border-radius: 10px;
     filter: opacity(0.8);
-    padding: 10vmin;
+    padding: 5vmin;
+    width: 100%;
   "
 >
-  <tr height= "2fr">
-    <td width="20%" align="center">
+  <tr height= "100%" max-width="100%">
+    <td width="30%" align="center" >
       <img
         id="player-album-art"
-        style="margin: 1em; max-height: 50vmin; border-radius: 10px"
+        style="width: 100%;; border-radius: 10px"
       />
     </td>
-    <td width="80%">
-      <div style="margin: 1em 1em 1em 0">
-        <a href="" id="player-song" style="font-size: 2em; color: white;"></a><br>
+    <td style=" max-height: 100%; width: 70%;">
+      <div>
+        <a href="" id="player-song" style=" font-size: 8vmin; color: white;"></a><br>
         <a href=""
           id="player-artist"
-          style="font-size: 1.3em; margin-bottom: 1em; color: white;"
+          style="font-size: 1.3vw; margin-bottom: 1em; color: white;"
         ></a>
-        <div id="player-status" style="margin: 2em 0 1em 0"></div>
+        <div id="player-status" style="margin: 10px;"></div>
         <div
           id="player-time"
           style="position: relative; float: right; top: -2em; font-weight: bold"
         ></div>
         <div
           id="player-progress-back"
-          style="border: 0.15em solid #eee; height: 1em; border-radius: 10px"
+          style="border: 0.em solid #eee; height: 1em; border-radius: 10px"
         >
           <div
             id="player-progress"
             style="
               background-color: #eee;
               border: 0.1em solid transparent;
-              height: 0.75em;
+              height: 0.75vw;
               border-radius: 10px;
               transition: width 0.2s;
             "
           ></div>
         </div>
-        <div style="float: right; font-size: 0.9em">
+        <div style="float: right; font-size: 4vw">
           <a
             href="https://github.com/Naushikha/Spotify-Widget"
             target="_blank"
@@ -59,44 +61,47 @@
     </td>
   </tr>
 </table>
-<div id="recent" style="height: 4fr;">
+<div id="recent" style="width: 100%;">
   
 </div>
 <a id="playedTemplate" style="display: none" class="songBlock">
   <img class="blockImg" id="blockImg"></img>
   <p class="blockText" id="blockImg">
-    <span class="blockSong" id="blockSong"></span><br>
+    <span class="blockSong" id="blockSong"></span>
+    <br>
     <span class="blockArtist" id="blockartist"></span>
   </p>
 </a>
 </body>
 <style>
   .songBlock{
-    padding: 5%;
     display: none;
+    flex: 1;
     background-color: #111;
     filter: opacity(0.8);
     text-decoration: none;
     border-radius: 10px;
     color: white;
     width: 100%;
-    height: 1fr;
   }
   .blockImg{
     display: inline-block;
-    width: 30%;
+    width: 20%;
+    margin: 5% 2% 5% 5%;
   }
   .blockText{
     vertical-align: top;
-    height: fit-content;
+    width: 50%;
+    text-wrap: wrap;
+    margin: 5% 5% 5% 2%;
+    word-break: break-word;
     display: inline-block;
-    align-content: center;
   }
   .blockSong{
-    font-size: 4fr;
+    font-size: 6vmin;
   }
   .blockArtist{
-    font-size: 2fr;
+    font-size: 4vmin;
   }
 </style>
 <script>
@@ -137,7 +142,7 @@
           songData.item.artists[0].name;
         document.getElementById("player-artist").href = songData.item.artists[0].uri;
         document.getElementById("player-status").innerHTML = data.is_playing
-          ? ` ${spotifyUser} is now playing...`
+          ? ``
           : ` ${spotifyUser} has paused.`;
         document
           .getElementById("player-album-art")
@@ -171,7 +176,7 @@
   
   function appendSong(i){
     playedCopy = (document.getElementById("playedTemplate").cloneNode(true));
-      playedCopy.style.display = 'block';
+      playedCopy.style.display = 'flex';
       playedCopy.href = playedData.items[i].track.uri;
       playedCopy.querySelector(".blockImg").src= playedData.items[i].track.album.images[1].url;
       playedCopy.querySelector(".blockSong").innerHTML= playedData.items[i].track.name;
