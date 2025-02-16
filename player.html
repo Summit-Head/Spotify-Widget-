@@ -1,19 +1,18 @@
-<body style="margin: 0; ">
+<body style="margin: 0; aspect-ratio: 1/2;">
   <table
   id="player"
   style="
+    height: 10%;
     background-color: #111;
     color: #fff;
     font-family: Helvetica, Arial;
     font-size: 5vmin;
     border-radius: 10px;
     filter: opacity(0.8);
-    width: 100%;
     padding: 10vmin;
-    height: 20%;
   "
 >
-  <tr height="100%">
+  <tr height= "2fr">
     <td width="20%" align="center">
       <img
         id="player-album-art"
@@ -60,39 +59,44 @@
     </td>
   </tr>
 </table>
-<div id="recent">
+<div id="recent" style="height: 4fr;">
   
 </div>
 <a id="playedTemplate" style="display: none" class="songBlock">
   <img class="blockImg" id="blockImg"></img>
   <p class="blockText" id="blockImg">
-    <span class="blockSong" id="blockSong"></span>
+    <span class="blockSong" id="blockSong"></span><br>
     <span class="blockArtist" id="blockartist"></span>
   </p>
 </a>
 </body>
 <style>
   .songBlock{
+    padding: 5%;
     display: none;
     background-color: #111;
+    filter: opacity(0.8);
     text-decoration: none;
     border-radius: 10px;
+    color: white;
     width: 100%;
-    height
+    height: 1fr;
   }
   .blockImg{
     display: inline-block;
     width: 30%;
   }
   .blockText{
-    width: 70%;
+    vertical-align: top;
+    height: fit-content;
     display: inline-block;
+    align-content: center;
   }
   .blockSong{
-    font-size:20px
+    font-size: 4fr;
   }
   .blockArtist{
-    font-size: 10px;
+    font-size: 2fr;
   }
 </style>
 <script>
@@ -102,13 +106,15 @@
   //get both the currently playing and recenty played
 
   var songData, playedData, progressSeconds, totalSeconds, progressInterval;
-
+  var consecutive = false;
   function updatePlayer() {
     if (!(playedData === undefined)){
       playedData.items.pop();
-      const PlayHistoryObject = songData.item.trackObject;
-      playedData.items.unshift();
+      wretchedThing = JSON.parse(JSON.stringify(playedData.items[2]));
+      wretchedThing.track = songData.item;
+      playedData.items.unshift(wretchedThing);
       requestRecent = "/get-recently-played";
+      consecutive = true;
     }
     fetch(`${serviceHost}${request}`,)
       .then((response) => response.json())
@@ -122,12 +128,14 @@
           document.getElementById('player').style.display = "none";
           //hide current, show 6 recent (will make it scalable later) - summit
           setRecent(6);
+        }else{
+          setRecent(4)
         }
         document.getElementById("player-song").innerHTML = songData.item.name;
-        document.getElementById("player-song").href = songData.item.external_urls.spotify;
+        document.getElementById("player-song").href = songData.item.uri;
         document.getElementById("player-artist").innerHTML =
           songData.item.artists[0].name;
-        document.getElementById("player-artist").href = songData.item.artists[0].external_urls.spotify;
+        document.getElementById("player-artist").href = songData.item.artists[0].uri;
         document.getElementById("player-status").innerHTML = data.is_playing
           ? ` ${spotifyUser} is now playing...`
           : ` ${spotifyUser} has paused.`;
@@ -142,8 +150,7 @@
               `width: ${(songData.progress_ms * 100) / songData.item.duration_ms}%`
           );
         
-        //we have currently playing!! so only do 4 recent songs. we diddnt cycle the list so its fine.
-        setRecent(4);
+        //we have currently playing!! so only do 4 recent songs.
       
         // Set the links to spotify stuff
 
@@ -162,21 +169,27 @@
 
         // Hide all the extra things in mobile (<410px)
   
-
-
-  function setRecent(int){
-    //im so sorry to anyone that sees this -summit
-    for (let i = 0; i < int; i++){
-      playedCopy = (document.getElementById("playedTemplate").cloneNode(true));
-      console.log(playedData.items[i]);
+  function appendSong(i){
+    playedCopy = (document.getElementById("playedTemplate").cloneNode(true));
       playedCopy.style.display = 'block';
-      playedCopy.href = playedData.items[i].href;
+      playedCopy.href = playedData.items[i].track.uri;
       playedCopy.querySelector(".blockImg").src= playedData.items[i].track.album.images[1].url;
       playedCopy.querySelector(".blockSong").innerHTML= playedData.items[i].track.name;
       playedCopy.querySelector(".blockArtist").innerHTML = playedData.items[i].track.artists[0].name;
-      const thing = document.getElementById("recent")
-      thing.appendChild(playedCopy);
+      return playedCopy;
+  }
+
+  function setRecent(int){
+    //im so sorry to anyone that sees this -summit
+    const thing = document.getElementById("recent")
+    if (consecutive){
+        playedCopy = appendSong[0];
+        thing.innerHTML = "";
     }
+    for (let i = 0; i < int; i++){
+      playedCopy = appendSong(i);
+      thing.appendChild(playedCopy);
+  }
   }
 
 
